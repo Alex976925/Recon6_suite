@@ -1,42 +1,41 @@
-# 🛠️ Recon Suite Web
+# 🔍 Recon6_Suite
 
-Aplicación web de *reconocimiento y análisis de seguridad* básica en entornos web y redes.  
-Incluye herramientas como WHOIS, escaneo Nmap, scraping de correos, detección de tecnologías, subdominios, fuerza bruta y más.
+*Recon6_Suite* es una herramienta de reconocimiento web desarrollada en Python con Flask. Está diseñada para centralizar funciones esenciales de pentesting y análisis OSINT en una interfaz sencilla, visualmente atractiva y funcional. Ideal para tareas de recolección de información en pruebas de seguridad.
 
-## 📸 Captura de pantalla
+---
 
-*(Puedes agregar una imagen aquí si gustas)*
+## 🧰 Funcionalidades Principales
+
+- ✅ WHOIS Lookup
+- ✅ Escaneo DNS (con dnsdumpster)
+- ✅ Escaneo de puertos con Nmap
+- ✅ Detección de tecnologías web
+- ✅ Extracción de correos desde un sitio web
+- ✅ Búsqueda de subdominios
+- ✅ Interfaz web responsiva con Bootstrap
+- ✅ Panel en colores amarillos y diseño amigable
+
+---
+
+## 🖼️ Captura de pantalla
+
+(Puedes añadir aquí una imagen o gif de la herramienta en funcionamiento. Ejemplo: `static/demo.gif`)
 
 
-## 🔧 Funcionalidades
+![Recon6_Suite Demo](static/demo.gif)
 
-- WHOIS
-- Resolución DNS (A, MX, NS, TXT)
-- Escaneo Nmap básico y profundo
-- Scraping de correos electrónicos
-- Detección de tecnologías web (Server, Frameworks, CMS)
-- Subdominios usando crt.sh
-- Recomendaciones para ataques de fuerza bruta (Hydra)
-- Registro de logs y exportación de reportes
+---
 
-## 🧪 Requisitos
+## 🚀 Instalación
 
-- Python 3.9+
-- nmap instalado en el sistema (para escaneos)
-- Acceso a red para escaneos remotos
+### Requisitos:
+- Python 3.8 o superior
+- Git
+- pip
 
-## 🚀 Ejecución local
-
+### Clonación del repositorio:
 ```bash
-# Instalar dependencias
+git clone https://github.com/Alex976925/Recon6_suite.git
+cd Recon6_suite
 pip install -r requirements.txt
-
-# Ejecutar aplicación
 python app.py
-
-## 🧑‍💻 Autor
-
-Desarrollado por *[Alexander Gutierrez]*  
-Apasionado por la ciberseguridad, el desarrollo web y el aprendizaje continuo.  
-📧 contacto: tunombre@correo.com  
-🌐 LinkedIn: [linkedin.com/in/tuusuario](https://linkedin.com/in/tuusuario)
