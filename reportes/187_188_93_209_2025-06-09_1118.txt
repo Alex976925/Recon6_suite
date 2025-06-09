@@ -1,0 +1,84 @@
+Starting Nmap 7.80 ( https://nmap.org ) at 2025-06-09 11:15 CST
+Nmap scan report for fixed-187-188-93-209.totalplay.net (187.188.93.209)
+Host is up (0.013s latency).
+Not shown: 992 filtered ports
+PORT     STATE SERVICE       VERSION
+53/tcp   open  domain        (generic dns response: NOTIMP)
+| fingerprint-strings: 
+|   DNSVersionBindReqTCP: 
+|     version
+|_    bind
+80/tcp   open  http          Microsoft IIS httpd 8.5
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/8.5
+|_http-title: Site doesn't have a title (text/html).
+139/tcp  open  netbios-ssn   Samba smbd 3.X - 4.X (workgroup: MULTIBOLSAS)
+443/tcp  open  ssl/http      Microsoft IIS httpd 8.5
+| http-methods: 
+|_  Potentially risky methods: TRACE
+|_http-server-header: Microsoft-IIS/8.5
+|_http-title: Site doesn't have a title (text/html).
+| ssl-cert: Subject: commonName=muplas.mx
+| Subject Alternative Name: DNS:muplas.mx, DNS:www.muplas.mx
+| Not valid before: 2024-10-23T00:00:00
+|_Not valid after:  2025-10-22T23:59:59
+445/tcp  open  netbios-ssn   Samba smbd 3.6.19-60.osstech (workgroup: MULTIBOLSAS)
+3306/tcp open  mysql         MySQL 5.7.44-log
+| mysql-info: 
+|   Protocol: 10
+|   Version: 5.7.44-log
+|   Thread ID: 5296
+|   Capabilities flags: 65535
+|   Some Capabilities: DontAllowDatabaseTableColumn, SupportsCompression, LongColumnFlag, Support41Auth, SupportsLoadDataLocal, Speaks41ProtocolOld, SupportsTransactions, SwitchToSSLAfterHandshake, FoundRows, Speaks41ProtocolNew, InteractiveClient, LongPassword, IgnoreSigpipes, ODBCClient, IgnoreSpaceBeforeParenthesis, ConnectWithDatabase, SupportsMultipleResults, SupportsMultipleStatments, SupportsAuthPlugins
+|   Status: Autocommit
+|   Salt: 1\x0DL`o.Gt>09rng2\x19\x05-\N
+|_  Auth Plugin Name: mysql_native_password
+6689/tcp open  ms-wbt-server Microsoft Terminal Services
+| rdp-ntlm-info: 
+|   Target_Name: SAC-VICTORIAF
+|   NetBIOS_Domain_Name: SAC-VICTORIAF
+|   NetBIOS_Computer_Name: SAC-VICTORIAF
+|   DNS_Domain_Name: SAC-VictoriaF
+|   DNS_Computer_Name: SAC-VictoriaF
+|   Product_Version: 10.0.19041
+|_  System_Time: 2025-06-09T17:17:14+00:00
+| ssl-cert: Subject: commonName=SAC-VictoriaF
+| Not valid before: 2025-05-04T14:48:23
+|_Not valid after:  2025-11-03T14:48:23
+|_ssl-date: 2025-06-09T17:17:53+00:00; +1s from scanner time.
+6969/tcp open  ssl/acmsoda?
+| ssl-cert: Subject: commonName=SISTEMASIVAN
+| Not valid before: 2025-01-17T08:40:11
+|_Not valid after:  2025-07-19T08:40:11
+|_ssl-date: 2025-06-09T17:17:54+00:00; +2s from scanner time.
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port53-TCP:V=7.80%I=7%D=6/9%Time=684716C5%P=x86_64-pc-linux-gnu%r(DNSVe
+SF:rsionBindReqTCP,20,"\0\x1e\0\x06\x81\x82\0\x01\0\0\0\0\0\0\x07version\x
+SF:04bind\0\0\x10\0\x03")%r(DNSStatusRequestTCP,E,"\0\x0c\0\0\x90\x04\0\0\
+SF:0\0\0\0\0\0");
+Service Info: OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: -25837d02h02m44s, deviation: 63287d18h39m44s, median: 0s
+| smb-os-discovery: 
+|   OS: Unix (Samba 3.6.19-60.osstech)
+|   Computer name: Cloud_Muplas
+|   NetBIOS computer name: 
+|   Domain name: 
+|   FQDN: Cloud_Muplas
+|_  System time: 2025-06-09T12:17:34-05:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 1601-01-01T00:00:00
+|_  start_date: N/A
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 142.14 seconds

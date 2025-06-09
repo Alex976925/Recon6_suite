@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Recon Suite Web</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body.light { background: #fff8dc; color: #222; }
+    body.dark { background: #2d2d2d; color: #eee; }
+    .container { max-width: 760px; margin-top: 40px; padding: 30px; border-radius: 12px; background: #fffbe6; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    body.dark .container { background: #3d3d00; box-shadow: 0 0 15px rgba(255,255,0,0.1); }
+    textarea { background-color: inherit; color: inherit; border: 1px solid #ccc; border-radius: 6px; padding: 10px; resize: vertical; }
+    button#toggleMode { position: fixed; top: 10px; right: 10px; z-index: 1000; }
+  </style>
+</head>
+<body class="light">
+<button id="toggleMode" class="btn btn-warning btn-sm">🌙</button>
+<div class="container">
+  <h2 class="text-center mb-4">🔍 Recon Suite Web</h2>
+  <form method="post">
+    <input type="text" name="target" value="{{target}}" placeholder="Dominio o IP" class="form-control mb-3" required>
+    <select name="opcion" class="form-select mb-3" required>
+      <option disabled {% if not target %}selected{% endif %}>Selecciona una opción</option>
+      <option value="whois">1. WHOIS</option>
+      <option value="dns">2. DNS</option>
+      <option value="nmap">3. Escaneo Nmap</option>
+      <option value="nmap_prof">4. Escaneo Nmap profundo</option>
+      <option value="subdom">5. Subdominios</option>
+      <option value="correos">6. Scraping correos</option>
+      <option value="tech">7. Tecnologías</option>
+      <option value="fuerza">8. Fuerza Bruta (Hydra)</option>
+    </select>
+    <button type="submit" class="btn btn-warning w-100">Ejecutar</button>
+  </form>
+  <a href="/logout" class="btn btn-outline-danger mt-3">Cerrar sesión</a>
+
+  {% if resultado %}
+  <hr>
+  <h5 class="mt-4">Resultado:</h5>
+  <form method="post">
+    <input type="hidden" name="target" value="{{target}}">
+    <textarea name="contenido" rows="15" class="w-100" readonly>{{resultado}}</textarea>
+    <button type="submit" name="opcion" value="guardar" class="btn btn-success mt-2">Guardar reporte</button>
+  </form>
+  {% endif %}
+</div>
+
+<script>
+  const toggleBtn = document.getElementById('toggleMode');
+  const body = document.body;
+  function setMode(mode) {
+    if(mode === 'dark') {
+      body.classList.remove('light');
+      body.classList.add('dark');
+      toggleBtn.textContent = '☀️';
+      localStorage.setItem('modo', 'dark');
+    } else {
+      body.classList.remove('dark');
+      body.classList.add('light');
+      toggleBtn.textContent = '🌙';
+      localStorage.setItem('modo', 'light');
+    }
+  }
+  toggleBtn.addEventListener('click', () => {
+    if(body.classList.contains('dark')) {
+      setMode('light');
+    } else {
+      setMode('dark');
+    }
+  });
+  setMode(localStorage.getItem('modo') || 'light');
+</script>
+</body>
+</html>
