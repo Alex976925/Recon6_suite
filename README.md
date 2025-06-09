@@ -19,7 +19,9 @@
 
 ## 🖼️ Captura de pantalla
 
-(Puedes añadir aquí una imagen o gif de la herramienta en funcionamiento. Ejemplo: `static/demo.gif`)
+<p align="center">
+  <img src="screenshot.png" alt="Captura de pantalla" width="600"/>
+</p>
 
 
 ![Recon6_Suite Demo](static/demo.gif)
