@@ -41,3 +41,14 @@ git clone https://github.com/Alex976925/Recon6_suite.git
 cd Recon6_suite
 pip install -r requirements.txt
 python app.py
+
+
+## 🙌 ¿Te fue útil esta herramienta?
+
+Si deseas apoyar este proyecto y motivar el desarrollo de más herramientas de ciberseguridad, puedes hacerlo con una donación:
+
+<p align="center">
+  <a href="https://paypal.me/elperroarrentido?country.x=MX&locale.x=es_XC" target="_blank">
+    <img src="https://img.shields.io/badge/Donar%20con-PayPal-0070BA?style=for-the-badge&logo=paypal" alt="Donar con PayPal"/>
+  </a>
+</p>
