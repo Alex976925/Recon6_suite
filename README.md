@@ -43,4 +43,4 @@ Recon6_Suite es una herramienta de reconocimiento web desarrollada en Python con
 git clone https://github.com/Alex976925/Recon6_suite.git
 cd Recon6_suite
 pip install -r requirements.txt
-python app.py
+python app.p
