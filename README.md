@@ -1,6 +1,6 @@
 # 🔍 Recon6_Suite
 
-*Recon6_Suite* es una herramienta de reconocimiento web desarrollada en Python con Flask. Está diseñada para centralizar funciones esenciales de pentesting y análisis OSINT en una interfaz sencilla, visualmente atractiva y funcional. Ideal para tareas de recolección de información en pruebas de seguridad.
+Recon6_Suite es una herramienta de reconocimiento web desarrollada en Python con Flask. Está diseñada para centralizar funciones esenciales de pentesting y análisis OSINT en una interfaz sencilla, visualmente atractiva y funcional. Ideal para tareas de recolección de información en pruebas de seguridad.
 
 ---
 
@@ -23,6 +23,9 @@
   <img src="screenshot.png" alt="Captura de pantalla" width="600"/>
 </p>
 
+---
+
+## 🎥 Demo
 
 ![Recon6_Suite Demo](static/demo.gif)
 
@@ -41,14 +44,3 @@ git clone https://github.com/Alex976925/Recon6_suite.git
 cd Recon6_suite
 pip install -r requirements.txt
 python app.py
-
-
-## 🙌 ¿Te fue útil esta herramienta?
-
-Si deseas apoyar este proyecto y motivar el desarrollo de más herramientas de ciberseguridad, puedes hacerlo con una donación:
-
-<p align="center">
-  <a href="https://paypal.me/elperroarrentido?country.x=MX&locale.x=es_XC" target="_blank">
-    <img src="https://img.shields.io/badge/Donar%20con-PayPal-0070BA?style=for-the-badge&logo=paypal" alt="Donar con PayPal"/>
-  </a>
-</p>
