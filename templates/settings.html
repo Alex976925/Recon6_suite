@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Settings · Recon6_Suite{% endblock %}
+{% block content %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> RECON6_SUITE</div>
+    <div class="nav-item" onclick="window.location.href='/'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="window.location.href='/watchlist'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8"/><path d="M12 7v5l4 2"/></svg>
+      Scan History / Watchlist
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="window.location.href='/logout'">Cerrar sesión</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <button id="mobile-toggle" class="btn-ghost mobile-toggle" style="margin-bottom:12px;">☰ Menú</button>
+    <div class="panel">
+      <p class="panel-title">API Keys — Threat Intelligence</p>
+      <p class="panel-sub">Opcionales. Sin ellas, Recon6_Suite funciona igual con todos los módulos locales (Nmap, WHOIS, DNS, SSL, Headers, etc.); estas claves solo habilitan las consultas a servicios externos (Shodan, VirusTotal, HaveIBeenPwned, Censys, NVD).</p>
+      {% if guardado %}<div class="alert-inline success">Configuración guardada.</div>{% endif %}
+      {% if not playwright_ok %}<div class="alert-inline error">Playwright no está instalado — las capturas de pantalla no funcionarán hasta correr <code>pip install playwright &amp;&amp; playwright install chromium</code>.</div>{% endif %}
+      <form method="post">
+        <label class="panel-sub">Shodan API Key</label>
+        <input class="input-glass" style="width:100%;margin-bottom:12px;" type="text" name="shodan_api_key" value="{{ config.shodan_api_key }}" placeholder="Obtener en shodan.io">
+
+        <label class="panel-sub">VirusTotal API Key</label>
+        <input class="input-glass" style="width:100%;margin-bottom:12px;" type="text" name="virustotal_api_key" value="{{ config.virustotal_api_key }}" placeholder="Obtener en virustotal.com">
+
+        <label class="panel-sub">HaveIBeenPwned API Key</label>
+        <input class="input-glass" style="width:100%;margin-bottom:12px;" type="text" name="hibp_api_key" value="{{ config.hibp_api_key }}" placeholder="Obtener en haveibeenpwned.com/API/Key">
+
+        <label class="panel-sub">Censys API ID</label>
+        <input class="input-glass" style="width:100%;margin-bottom:12px;" type="text" name="censys_api_id" value="{{ config.censys_api_id }}">
+
+        <label class="panel-sub">Censys API Secret</label>
+        <input class="input-glass" style="width:100%;margin-bottom:12px;" type="text" name="censys_api_secret" value="{{ config.censys_api_secret }}">
+
+        <label class="panel-sub">NVD API Key (opcional, solo para más límite de tasa en búsqueda de CVEs)</label>
+        <input class="input-glass" style="width:100%;margin-bottom:16px;" type="text" name="nvd_api_key" value="{{ config.nvd_api_key }}">
+
+        <button type="submit" class="btn-accent">Guardar configuración</button>
+      </form>
+    </div>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

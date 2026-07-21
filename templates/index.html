@@ -1,74 +1,231 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8">
-  <title>Recon Suite Web</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body.light { background: #fff8dc; color: #222; }
-    body.dark { background: #2d2d2d; color: #eee; }
-    .container { max-width: 760px; margin-top: 40px; padding: 30px; border-radius: 12px; background: #fffbe6; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
-    body.dark .container { background: #3d3d00; box-shadow: 0 0 15px rgba(255,255,0,0.1); }
-    textarea { background-color: inherit; color: inherit; border: 1px solid #ccc; border-radius: 6px; padding: 10px; resize: vertical; }
-    button#toggleMode { position: fixed; top: 10px; right: 10px; z-index: 1000; }
-  </style>
-</head>
-<body class="light">
-<button id="toggleMode" class="btn btn-warning btn-sm">🌙</button>
-<div class="container">
-  <h2 class="text-center mb-4">🔍 Recon Suite Web</h2>
-  <form method="post">
-    <input type="text" name="target" value="{{target}}" placeholder="Dominio o IP" class="form-control mb-3" required>
-    <select name="opcion" class="form-select mb-3" required>
-      <option disabled {% if not target %}selected{% endif %}>Selecciona una opción</option>
-      <option value="whois">1. WHOIS</option>
-      <option value="dns">2. DNS</option>
-      <option value="nmap">3. Escaneo Nmap</option>
-      <option value="nmap_prof">4. Escaneo Nmap profundo</option>
-      <option value="subdom">5. Subdominios</option>
-      <option value="correos">6. Scraping correos</option>
-      <option value="tech">7. Tecnologías</option>
-      <option value="fuerza">8. Fuerza Bruta (Hydra)</option>
-    </select>
-    <button type="submit" class="btn btn-warning w-100">Ejecutar</button>
-  </form>
-  <a href="/logout" class="btn btn-outline-danger mt-3">Cerrar sesión</a>
+{% extends "base.html" %}
+{% block title %}Dashboard · Recon6_Suite{% endblock %}
+{% block content %}
+<div class="app-shell">
 
-  {% if resultado %}
-  <hr>
-  <h5 class="mt-4">Resultado:</h5>
-  <form method="post">
-    <input type="hidden" name="target" value="{{target}}">
-    <textarea name="contenido" rows="15" class="w-100" readonly>{{resultado}}</textarea>
-    <button type="submit" name="opcion" value="guardar" class="btn btn-success mt-2">Guardar reporte</button>
-  </form>
-  {% endif %}
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> RECON6_SUITE</div>
+
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item" onclick="document.getElementById('scan-target').focus()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
+      New Scan
+    </div>
+    <div class="nav-item" onclick="document.getElementById('history-panel').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8"/><path d="M12 7v5l4 2"/></svg>
+      Scan History
+    </div>
+    <div class="nav-item" onclick="window.location.href='/watchlist'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/></svg>
+      Watchlist
+    </div>
+    <div class="nav-item" onclick="document.getElementById('graph-panel').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7l7-.5M8.5 8.5L11 16M15.5 8.5L13 16"/></svg>
+      Assets
+    </div>
+    <div class="nav-item" onclick="document.getElementById('intel-panel').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 2v10l7 3"/></svg>
+      Intelligence
+    </div>
+    <div class="nav-item" onclick="document.getElementById('reports-panel').scrollIntoView({behavior:'smooth'})">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+      Reports
+    </div>
+    <div class="nav-item" onclick="window.location.href='/settings'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="window.location.href='/logout'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+        Cerrar sesión
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <button id="mobile-toggle" class="btn-ghost mobile-toggle" style="margin-bottom:12px;">☰ Menú</button>
+
+    <div class="topbar">
+      <form id="scan-form" class="scan-form" method="post">
+        <input id="scan-target" class="input-glass input-target" type="text" name="target" value="{{ target }}" placeholder="Dominio o IP (ej: example.com)" required>
+        <select class="input-glass" name="opcion" required>
+          <option disabled {% if not target %}selected{% endif %}>Selecciona un módulo</option>
+          <option value="whois">WHOIS Lookup</option>
+          <option value="dns">DNS Lookup</option>
+          <option value="nmap">Nmap Scan</option>
+          <option value="nmap_prof">Nmap Deep Scan</option>
+          <option value="subdom">Subdomain Discovery</option>
+          <option value="correos">Email Harvesting</option>
+          <option value="tech">Technology Detection</option>
+          <option value="ssl">SSL/TLS Analysis</option>
+          <option value="headers">Security Headers</option>
+          <option value="robots">Robots/Sitemap Crawler</option>
+          <option value="takeover">Subdomain Takeover Check</option>
+          <option value="cve">CVE Cross-Reference</option>
+          <option value="fuerza">Exposed Service Check</option>
+        </select>
+        <button id="scan-btn" type="submit" class="btn-accent">▶ Run Scan</button>
+      </form>
+      <div class="status-chip"><span class="status-dot"></span> Sistema operativo</div>
+      <div class="status-chip">🕒 Último escaneo: {{ last_scan_time }}</div>
+      <div class="avatar" title="{{ session.get('usuario', 'analista') }}">{{ session.get('usuario', 'A')[0]|upper }}</div>
+    </div>
+
+    {% if resultado %}
+    <div class="panel">
+      <p class="panel-title">Resultado del último módulo ejecutado</p>
+      <div class="console-output">{{ resultado }}</div>
+      <form id="report-form" method="post" style="margin-top:12px;">
+        <input type="hidden" name="target" value="{{ target }}">
+        <input type="hidden" name="contenido" value="{{ resultado }}">
+        <button type="submit" name="opcion" value="guardar" class="btn-ghost">⬇ Guardar reporte (.txt)</button>
+      </form>
+    </div>
+    {% endif %}
+
+    {% if diff_texto and target %}
+    <div class="panel">
+      <p class="panel-title">Cambios desde el escaneo anterior</p>
+      <p class="panel-sub">Compara cada módulo con su corrida previa sobre este mismo target</p>
+      <div class="console-output">{{ diff_texto }}</div>
+    </div>
+    {% endif %}
+
+    <!-- KPI CARDS -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 9h.01M15 9h.01M9 15h6"/></svg></div>
+        </div>
+        <div class="kpi-value" data-kpi-value="{{ resumen.kpis.open_ports }}">0</div>
+        <div class="kpi-label">Puertos abiertos</div>
+        <span class="kpi-change {{ 'up' if resumen.kpis.open_ports > 0 else 'flat' }}">{{ resumen.kpis.open_ports }} activos</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top"><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/></svg></div></div>
+        <div class="kpi-value" data-kpi-value="{{ resumen.kpis.subdomains }}">0</div>
+        <div class="kpi-label">Subdominios encontrados</div>
+        <span class="kpi-change {{ 'up' if resumen.kpis.subdomains > 0 else 'flat' }}">{{ resumen.kpis.subdomains }} activos</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top"><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg></div></div>
+        <div class="kpi-value" data-kpi-value="{{ resumen.kpis.technologies }}">0</div>
+        <div class="kpi-label">Tecnologías detectadas</div>
+        <span class="kpi-change flat">huella digital</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top"><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div></div>
+        <div class="kpi-value" data-kpi-value="{{ resumen.kpis.emails }}">0</div>
+        <div class="kpi-label">Correos públicos</div>
+        <span class="kpi-change {{ 'up' if resumen.kpis.emails > 0 else 'flat' }}">expuestos</span>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top"><div class="kpi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div></div>
+        <div class="kpi-value" data-kpi-value="{{ resumen.kpis.risk_score }}">0</div>
+        <div class="kpi-label">Risk Score (0-100)</div>
+        <span class="kpi-change {{ 'up' if resumen.kpis.risk_score >= 50 else ('down' if resumen.kpis.risk_score > 0 else 'flat') }}">
+          {{ 'crítico' if resumen.kpis.risk_score >= 70 else ('moderado' if resumen.kpis.risk_score >= 30 else 'bajo') }}
+        </span>
+      </div>
+    </div>
+
+    <!-- RADAR + DOUGHNUT -->
+    <div class="grid-2" id="radar-panel">
+      <div class="panel">
+        <p class="panel-title">Attack Surface — Radar</p>
+        <p class="panel-sub">DNS · Subdominios · Puertos · Tecnología · Correos · Headers</p>
+        <canvas id="radarChart" height="220"></canvas>
+      </div>
+      <div class="panel">
+        <p class="panel-title">Technology Distribution</p>
+        <p class="panel-sub">Clasificación por categoría</p>
+        <canvas id="techDoughnut" height="220"></canvas>
+      </div>
+    </div>
+
+    <!-- LINE CHART -->
+    <div class="panel" id="history-panel">
+      <p class="panel-title">Historical Risk Score</p>
+      <p class="panel-sub">Evolución del riesgo a través de los escaneos realizados sobre este objetivo</p>
+      <canvas id="riskLine" height="90"></canvas>
+    </div>
+
+    <!-- GRAPH -->
+    <div class="panel" id="graph-panel">
+      <p class="panel-title">Attack Surface Graph</p>
+      <p class="panel-sub">Dominio · Subdominios · Puertos · Tecnologías — arrastra, haz zoom y pasa el cursor sobre los nodos</p>
+      <div id="graph-container"></div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="panel">
+      <div class="table-toolbar">
+        <div>
+          <p class="panel-title" style="margin-bottom:0;">Inventario técnico de activos</p>
+          <p class="panel-sub" style="margin-bottom:0;">Host, servicio, severidad y última detección</p>
+        </div>
+        <input id="table-search" class="input-glass" type="text" placeholder="Buscar host, puerto, servicio…">
+      </div>
+      <div class="table-wrap">
+        <table class="tech-table">
+          <thead>
+            <tr>
+              <th data-sort="host">Host</th>
+              <th data-sort="ip">IP</th>
+              <th data-sort="port">Puerto</th>
+              <th data-sort="service">Servicio</th>
+              <th data-sort="state">Estado</th>
+              <th data-sort="technology">Tecnología</th>
+              <th data-sort="severity">Severidad</th>
+              <th data-sort="last_seen">Última detección</th>
+            </tr>
+          </thead>
+          <tbody id="tech-table-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="table-pagination"></div>
+    </div>
+
+    <!-- INTELLIGENCE -->
+    <div class="panel" id="intel-panel">
+      <p class="panel-title">Threat Intelligence</p>
+      <p class="panel-sub">Consultas en vivo a fuentes externas (requieren API key configurada en Settings)</p>
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px;">
+        <button class="btn-ghost intel-btn" data-service="shodan">🛰 Shodan</button>
+        <button class="btn-ghost intel-btn" data-service="virustotal">🦠 VirusTotal</button>
+        <button class="btn-ghost intel-btn" data-service="hibp">📧 HaveIBeenPwned (correos)</button>
+        <button class="btn-ghost intel-btn" data-service="censys">🔎 Censys</button>
+      </div>
+      <div id="intel-output" class="console-output" style="display:none;"></div>
+    </div>
+
+    <!-- SCREENSHOTS -->
+    <div class="panel">
+      <p class="panel-title">Screenshot del objetivo</p>
+      <p class="panel-sub">Captura real con navegador headless (requiere Playwright instalado)</p>
+      <button id="screenshot-btn" class="btn-accent">📸 Capturar pantalla</button>
+      <div id="screenshot-result" style="margin-top:14px;"></div>
+    </div>
+
+    <!-- REPORTS -->
+    <div class="panel" id="reports-panel">
+      <p class="panel-title">Reportes</p>
+      <p class="panel-sub">Exporta un PDF con KPIs, radar, inventario técnico, todos los módulos ejecutados y los cambios detectados</p>
+      <a class="btn-accent" style="display:inline-block;" href="/reports/pdf?target={{ target }}">⬇ Descargar reporte PDF</a>
+    </div>
+
+  </main>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
 <script>
-  const toggleBtn = document.getElementById('toggleMode');
-  const body = document.body;
-  function setMode(mode) {
-    if(mode === 'dark') {
-      body.classList.remove('light');
-      body.classList.add('dark');
-      toggleBtn.textContent = '☀️';
-      localStorage.setItem('modo', 'dark');
-    } else {
-      body.classList.remove('dark');
-      body.classList.add('light');
-      toggleBtn.textContent = '🌙';
-      localStorage.setItem('modo', 'light');
-    }
-  }
-  toggleBtn.addEventListener('click', () => {
-    if(body.classList.contains('dark')) {
-      setMode('light');
-    } else {
-      setMode('dark');
-    }
-  });
-  setMode(localStorage.getItem('modo') || 'light');
+  window.RECON6_DATA = {{ resumen_json | safe }};
 </script>
-</body>
-</html>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

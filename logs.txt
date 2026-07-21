@@ -1,5 +1,0 @@
-[2025-06-09 11:10:50] CARO ejecutó whois sobre muplas.mx
-[2025-06-09 11:11:41] CARO ejecutó dns sobre muplas.mx
-[2025-06-09 11:17:53] CARO ejecutó nmap_prof sobre 187.188.93.209
-[2025-06-09 11:19:06] CARO ejecutó fuerza sobre 187.188.93.209
-[2025-06-09 15:26:35] CARO ejecutó whois sobre mercadolibre.com.mx

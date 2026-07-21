@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Watchlist · Recon6_Suite{% endblock %}
+{% block content %}
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> RECON6_SUITE</div>
+    <div class="nav-item" onclick="window.location.href='/'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+      Dashboard
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v5h5"/><path d="M3.05 13a9 9 0 1 0 2.13-6.36L3 8"/><path d="M12 7v5l4 2"/></svg>
+      Scan History / Watchlist
+    </div>
+    <div class="nav-item" onclick="window.location.href='/settings'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Settings
+    </div>
+    <div class="sidebar-footer">
+      <div class="nav-item" onclick="window.location.href='/logout'">Cerrar sesión</div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <button id="mobile-toggle" class="btn-ghost mobile-toggle" style="margin-bottom:12px;">☰ Menú</button>
+
+    <div class="panel">
+      <p class="panel-title">Escaneos programados (Watchlist)</p>
+      <p class="panel-sub">
+        Estado del scheduler:
+        {% if scheduler_activo %}<span class="badge low">activo</span>{% else %}<span class="badge high">inactivo — instala APScheduler (pip install APScheduler) y reinicia la app</span>{% endif %}
+      </p>
+      <form method="post" class="scan-form" style="flex-wrap:wrap;">
+        <input class="input-glass input-target" type="text" name="target" placeholder="Dominio o IP a monitorear" required>
+        <input class="input-glass" type="number" name="intervalo" value="60" min="5" style="width:110px;" title="Minutos entre escaneos">
+        <select class="input-glass" name="opciones" multiple style="min-width:220px;">
+          {% for op, label in opciones_disponibles.items() %}
+            {% if op in ["nmap","subdom","tech","dns","ssl","headers"] %}
+            <option value="{{ op }}" {% if op in ["nmap","subdom","tech"] %}selected{% endif %}>{{ label }}</option>
+            {% endif %}
+          {% endfor %}
+        </select>
+        <button type="submit" class="btn-accent">+ Agregar a watchlist</button>
+      </form>
+    </div>
+
+    <div class="panel">
+      <div class="table-wrap">
+        <table class="tech-table">
+          <thead><tr><th>Target</th><th>Intervalo</th><th>Módulos</th><th>Acciones</th></tr></thead>
+          <tbody>
+            {% for item in items %}
+            <tr>
+              <td>{{ item.target }}</td>
+              <td>{{ item.intervalo_minutos }} min</td>
+              <td>{{ item.opciones | join(', ') }}</td>
+              <td><a href="/watchlist/quitar/{{ item.target }}" class="btn-ghost" style="padding:5px 12px;">Quitar</a></td>
+            </tr>
+            {% else %}
+            <tr><td colspan="4"><div class="empty-state">Sin targets en la watchlist todavía.</div></td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}

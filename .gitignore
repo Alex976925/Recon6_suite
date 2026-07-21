@@ -1,0 +1,11 @@
+venv/
+__pycache__/
+*.pyc
+usuarios.txt
+logs.txt
+data_store.json
+config.json
+watchlist.json
+reportes/*.txt
+reportes/*.pdf
+static/screenshots/

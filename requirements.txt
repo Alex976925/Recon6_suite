@@ -3,4 +3,11 @@ requests
 dnspython
 python-whois
 beautifulsoup4
+fpdf2
+APScheduler
+tzdata
 
+# Opcional — capturas de pantalla reales de cada host (pesado, ~300MB con el navegador).
+# Si no lo instalas, el módulo de Screenshots simplemente lo indica y todo lo demás sigue funcionando:
+#   pip install playwright
+#   playwright install chromium

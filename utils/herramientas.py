@@ -21,16 +21,37 @@ def whois_lookup(target):
     except Exception as e:
         return f"Error WHOIS: {e}"
 
+def _obtener_resolver():
+    """Crea un resolver DNS. Si el sistema no tiene /etc/resolv.conf
+    disponible (común en algunos contenedores, Crostini/Chromebook, WSL o
+    entornos con red restringida), usa servidores públicos como respaldo
+    en lugar de fallar."""
+    try:
+        resolver = dns.resolver.Resolver()
+        # Si no hay nameservers configurados, forzamos el error para
+        # caer al bloque de respaldo.
+        if not resolver.nameservers:
+            raise dns.resolver.NoResolverConfiguration("sin nameservers")
+        return resolver
+    except Exception:
+        resolver = dns.resolver.Resolver(configure=False)
+        resolver.nameservers = ["1.1.1.1", "8.8.8.8", "9.9.9.9"]
+        return resolver
+
 def dns_lookup(target):
     if es_ip(target):
         return "[!] La resolución DNS aplica solo a dominios."
     try:
+        resolver = _obtener_resolver()
         resultado = ""
         for qtype in ['A', 'MX', 'NS', 'TXT']:
-            answers = dns.resolver.resolve(target, qtype, raise_on_no_answer=False)
-            for rdata in answers:
-                resultado += f"{qtype}: {rdata.to_text()}\n"
-        return resultado
+            try:
+                answers = resolver.resolve(target, qtype, raise_on_no_answer=False)
+                for rdata in answers:
+                    resultado += f"{qtype}: {rdata.to_text()}\n"
+            except (dns.resolver.NoNameservers, dns.resolver.LifetimeTimeout):
+                continue
+        return resultado if resultado else "No se encontraron registros DNS."
     except Exception as e:
         return f"Error DNS: {e}"
 
