@@ -21,6 +21,7 @@ from utils.cve_lookup import buscar_cves
 from utils.threat_intel import consultar_shodan, consultar_virustotal, consultar_hibp_lote, consultar_censys
 from utils.screenshots import capturar_pantalla, playwright_disponible
 from utils.reporting import generar_pdf
+from utils.pdf_visual import generar_pdf_visual, playwright_disponible as pw_ok_visual
 from utils.config import cargar_config, guardar_config
 from utils import scheduler as watch
 
@@ -147,6 +148,42 @@ def reporte_pdf():
     diff_texto = formatear_diff(calcular_diff(target), OPCION_LABELS)
     ruta = generar_pdf(target, resumen, scans_raw, diff_texto)
     return send_file(ruta, as_attachment=True)
+
+
+@app.route("/reports/pdf-visual")
+def reporte_pdf_visual():
+    if _requiere_login():
+        return redirect("/login")
+    target = request.args.get("target") or session.get("last_target", "")
+    if not target:
+        return redirect("/")
+
+    resumen = obtener_resumen(target)
+    diff_texto = formatear_diff(calcular_diff(target), OPCION_LABELS)
+
+    with open("static/css/style.css", "r", encoding="utf-8") as f:
+        css = f.read()
+    with open("static/js/dashboard.js", "r", encoding="utf-8") as f:
+        dashboard_js = f.read()
+
+    html_renderizado = render_template(
+        "report_print.html", target=target, resumen=resumen,
+        resumen_json=json.dumps(resumen), diff_texto=diff_texto,
+        generado=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        css=css, dashboard_js=dashboard_js,
+    )
+
+    ruta, mensaje = generar_pdf_visual(target, html_renderizado)
+    if ruta:
+        return send_file(ruta, as_attachment=True)
+
+    return (
+        f"<body style='background:#0B0F14;color:#F9FAFB;font-family:sans-serif;padding:40px;'>"
+        f"<h2 style='color:#FACC15;'>No se pudo generar el reporte visual</h2>"
+        f"<pre style='white-space:pre-wrap;'>{mensaje}</pre>"
+        f"<a href='/' style='color:#FACC15;'>&larr; Volver al dashboard</a>"
+        f"</body>", 200
+    )
 
 
 @app.route("/screenshot", methods=["POST"])

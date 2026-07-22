@@ -216,7 +216,11 @@
     <div class="panel" id="reports-panel">
       <p class="panel-title">Reportes</p>
       <p class="panel-sub">Exporta un PDF con KPIs, radar, inventario técnico, todos los módulos ejecutados y los cambios detectados</p>
-      <a class="btn-accent" style="display:inline-block;" href="/reports/pdf?target={{ target }}">⬇ Descargar reporte PDF</a>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn-accent" style="display:inline-block;" href="/reports/pdf-visual?target={{ target }}">📊 Reporte visual (con gráficas)</a>
+        <a class="btn-ghost" style="display:inline-block;" href="/reports/pdf?target={{ target }}">📄 Reporte PDF (texto)</a>
+      </div>
+      <p class="panel-sub" style="margin-top:10px;">El reporte visual requiere Playwright instalado (mismo requisito que las capturas de pantalla); el de texto siempre funciona sin dependencias extra.</p>
     </div>
 
   </main>

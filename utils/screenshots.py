@@ -31,10 +31,15 @@ def capturar_pantalla(target, timeout_ms=15000):
             "[!] Playwright no está instalado. Para habilitar capturas de pantalla, corre:\n"
             "    pip install playwright\n"
             "    playwright install chromium\n"
-            "(La descarga del navegador requiere conexión a internet; solo se hace una vez)."
+            "(La descarga del navegador requiere conexión a internet; solo se hace una vez).\n"
+            "Alternativa más ligera si ya tienes un navegador instalado (ej. en Termux: "
+            "pkg install chromium): solo instala 'pip install playwright' — Recon6_Suite "
+            "detecta automáticamente un Chromium/Chrome del sistema y lo usa en vez de "
+            "descargar uno nuevo."
         )
 
     from playwright.sync_api import sync_playwright, Error as PlaywrightError
+    from utils.browser import lanzar_chromium
 
     os.makedirs(SCREENSHOT_DIR, exist_ok=True)
     nombre_archivo = f"{_slug(target)}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
@@ -44,7 +49,7 @@ def capturar_pantalla(target, timeout_ms=15000):
 
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(headless=True)
+            browser = lanzar_chromium(p, headless=True)
             try:
                 page = browser.new_page(viewport={"width": 1366, "height": 768})
                 try:

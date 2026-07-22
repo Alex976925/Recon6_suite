@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Recon6_Suite - Reporte {{ target }}</title>
+<style>
+{{ css | safe }}
+
+/* Ajustes específicos para impresión / PDF */
+@page { size: A4 landscape; margin: 10mm; }
+body { background: var(--bg-main) !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.print-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; margin-bottom: 18px;
+  background: var(--bg-surface); border: 1px solid var(--border-color); border-radius: var(--radius);
+}
+.print-header h1 { font-size: 1.1rem; margin: 0; color: var(--accent); }
+.print-header p { margin: 2px 0 0 0; color: var(--text-secondary); font-size: .78rem; }
+.print-shell { padding: 14px; }
+.section-title { font-size: .8rem; text-transform: uppercase; letter-spacing: .08em; color: var(--text-secondary); margin: 18px 0 8px 2px; }
+#graph-container { height: 320px; }
+.console-output { max-height: none; }
+</style>
+</head>
+<body>
+<div class="print-shell">
+
+  <div class="print-header">
+    <div>
+      <h1>RECON6_SUITE — Reporte de Reconocimiento</h1>
+      <p>Objetivo: {{ target }} &nbsp;·&nbsp; Generado: {{ generado }}</p>
+    </div>
+    <div class="status-chip"><span class="status-dot"></span> Risk Score: {{ resumen.kpis.risk_score }}/100</div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.open_ports }}</div>
+      <div class="kpi-label">Puertos abiertos</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.subdomains }}</div>
+      <div class="kpi-label">Subdominios encontrados</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.technologies }}</div>
+      <div class="kpi-label">Tecnologías detectadas</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.emails }}</div>
+      <div class="kpi-label">Correos públicos</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-value">{{ resumen.kpis.risk_score }}</div>
+      <div class="kpi-label">Risk Score (0-100)</div>
+    </div>
+  </div>
+
+  <p class="section-title">Attack Surface</p>
+  <div class="grid-2">
+    <div class="panel">
+      <p class="panel-title">Radar — Attack Surface</p>
+      <canvas id="radarChart" height="220"></canvas>
+    </div>
+    <div class="panel">
+      <p class="panel-title">Technology Distribution</p>
+      <canvas id="techDoughnut" height="220"></canvas>
+    </div>
+  </div>
+
+  <p class="section-title">Historial</p>
+  <div class="panel">
+    <p class="panel-title">Historical Risk Score</p>
+    <canvas id="riskLine" height="80"></canvas>
+  </div>
+
+  <p class="section-title">Grafo de relaciones</p>
+  <div class="panel">
+    <div id="graph-container"></div>
+  </div>
+
+  <p class="section-title">Inventario técnico ({{ resumen.table | length }} activos)</p>
+  <div class="panel">
+    <div class="table-wrap">
+      <table class="tech-table">
+        <thead>
+          <tr><th>Host</th><th>Puerto</th><th>Servicio</th><th>Estado</th><th>Tecnología</th><th>Severidad</th></tr>
+        </thead>
+        <tbody>
+          {% for row in resumen.table %}
+          <tr>
+            <td>{{ row.host }}</td><td>{{ row.port }}</td><td>{{ row.service }}</td>
+            <td>{{ row.state }}</td><td>{{ row.technology }}</td>
+            <td><span class="badge {{ row.severity }}">{{ row.severity }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="6"><div class="empty-state">Sin activos registrados en la tabla técnica.</div></td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% if diff_texto %}
+  <p class="section-title">Cambios desde el escaneo anterior</p>
+  <div class="panel"><div class="console-output">{{ diff_texto }}</div></div>
+  {% endif %}
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<script>window.RECON6_DATA = {{ resumen_json | safe }};</script>
+<script>window.__RECON6_PRINT_MODE__ = true;</script>
+<script>
+{{ dashboard_js | safe }}
+</script>
+</body>
+</html>

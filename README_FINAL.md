@@ -19,6 +19,7 @@ La v1 fue el rediseño visual (dashboard SOC). Esta v2 agrega **8 módulos nuevo
 | **Threat Intelligence** | Shodan, VirusTotal, HaveIBeenPwned (para los correos ya extraídos) y Censys — llamadas reales a cada API. | Sí, cada una por separado |
 | **Watchlist / escaneos programados** | Página nueva (`/watchlist`) para agregar targets con un intervalo en minutos; corre en segundo plano con APScheduler y alimenta el mismo historial que llena la gráfica de Risk Score con el tiempo. | No |
 | **Reporte PDF real** | Botón "Descargar reporte PDF" — genera un PDF de verdad (no HTML disfrazado) con KPIs, radar, inventario técnico, cada módulo ejecutado y el diff. | No |
+| **Reporte PDF visual (con gráficas)** | Renderiza el dashboard oscuro completo (radar, doughnut, línea de riesgo, grafo de relaciones) en Chromium headless y lo convierte a PDF — el mismo diseño de la herramienta, con las gráficas ya dibujadas. | No (requiere Playwright + Chromium — ver nota abajo) |
 
 ---
 
@@ -60,13 +61,15 @@ APScheduler   → escaneos programados en segundo plano
 
 **Opcional** (no se instala por defecto, el resto de la app funciona igual sin ella):
 ```
-playwright    → capturas de pantalla reales
+playwright    → capturas de pantalla + reporte PDF visual con gráficas
 ```
 Para habilitarla:
 ```bash
 pip install playwright
 playwright install chromium
 ```
+
+**Alternativa más ligera** si ya tienes un navegador Chromium/Chrome instalado en tu sistema (por ejemplo en Termux: `pkg install chromium`, o en Debian: `apt install chromium`): con solo `pip install playwright` basta — Recon6_Suite detecta automáticamente el navegador del sistema (`utils/browser.py`) y lo usa en vez de descargar el suyo propio (~300MB). Si tienes el navegador en una ruta no estándar, puedes forzarla con la variable de entorno `RECON6_CHROME_PATH=/ruta/a/tu/chromium`.
 
 ---
 
@@ -83,6 +86,7 @@ playwright install chromium
 | **Reporte PDF** | ✅ PDF válido de 5 páginas generado y verificado (se encontró y corrigió un `UnicodeEncodeError` por los símbolos ✅❌⚠ — ver nota abajo) |
 | Threat Intel sin API key configurada | ✅ Responde con instrucciones claras, no lanza error 500 |
 | Screenshot sin Playwright instalado | ✅ Responde con el comando exacto de instalación, no rompe la app |
+| **Reporte PDF visual (con gráficas)** | ✅ Se generó un Chromium disponible en el entorno de pruebas y se verificó **visualmente, página por página**: fondo oscuro real, radar y doughnut dibujados por Chart.js, línea de riesgo, grafo de relaciones y tabla técnica, todo con el mismo tema de la herramienta |
 | Settings — guardar API keys | ✅ `config.json` se crea y persiste correctamente |
 | Watchlist — agregar target | ✅ `watchlist.json` se crea y persiste correctamente |
 | Errores de Python en el log tras toda la ronda de pruebas | ✅ Ninguno |
