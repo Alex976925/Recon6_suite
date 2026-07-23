@@ -7,8 +7,10 @@
   const GRID_COLOR = "rgba(255,255,255,0.06)";
   const TEXT_MUTED = "#9CA3AF";
 
-  Chart.defaults.color = TEXT_MUTED;
-  Chart.defaults.font.family = "Segoe UI, Inter, sans-serif";
+  if (typeof Chart !== "undefined") {
+    Chart.defaults.color = TEXT_MUTED;
+    Chart.defaults.font.family = "Segoe UI, Inter, sans-serif";
+  }
 
   // ---------- Toasts ----------
   window.showToast = function (msg, type = "info") {
@@ -42,7 +44,7 @@
 
   // ---------- Radar Chart: Attack Surface ----------
   const radarCtx = document.getElementById("radarChart");
-  if (radarCtx && DATA.radar) {
+  if (radarCtx && DATA.radar && typeof Chart !== "undefined") {
     const labels = Object.keys(DATA.radar);
     const values = Object.values(DATA.radar);
     new Chart(radarCtx, {
@@ -76,7 +78,7 @@
 
   // ---------- Doughnut: Technology Distribution ----------
   const donutCtx = document.getElementById("techDoughnut");
-  if (donutCtx && DATA.doughnut) {
+  if (donutCtx && DATA.doughnut && typeof Chart !== "undefined") {
     const entries = Object.entries(DATA.doughnut).filter(([, v]) => v > 0);
     const hasData = entries.length > 0;
     new Chart(donutCtx, {
@@ -102,7 +104,7 @@
 
   // ---------- Line: Historical Risk ----------
   const lineCtx = document.getElementById("riskLine");
-  if (lineCtx) {
+  if (lineCtx && typeof Chart !== "undefined") {
     const history = DATA.history || [];
     const labels = history.length
       ? history.map((h) => (h.timestamp || "").split("T")[1] || h.timestamp)
@@ -136,7 +138,7 @@
 
   // ---------- vis-network: Attack Surface Graph ----------
   const graphContainer = document.getElementById("graph-container");
-  if (graphContainer && DATA.graph && DATA.graph.nodes && DATA.graph.nodes.length) {
+  if (graphContainer && DATA.graph && DATA.graph.nodes && DATA.graph.nodes.length && typeof vis !== "undefined") {
     const groupColors = {
       domain: { background: "#FACC15", border: "#b8860b", font: "#1a1400" },
       subdomain: { background: "#38BDF8", border: "#0369A1", font: "#031521" },
